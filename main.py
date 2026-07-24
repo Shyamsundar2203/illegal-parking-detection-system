@@ -5,10 +5,10 @@ import cv2
 import imutils
 import numpy as np
 
-UPLOAD_INPUT_CAMERA = '/adminResources/input/Car4.mp4'
-UPLOAD_OUTPUT_CAMERA = '/adminResources/output/'
+UPLOAD_INPUT_CAMERA = 'adminResources/input/test1.mp4'
+UPLOAD_OUTPUT_CAMERA = 'adminResources/output/'
 
-name = UPLOAD_INPUT_CAMERA.split("/")[2].replace("mp4", "")
+name = os.path.basename(UPLOAD_INPUT_CAMERA).split('.')[0]
 cameraOutputFileName = name + '_detected{}.webm'.format(random.randrange(0, 9))
 default_confidence = 0.5
 default_threshold = 0.3
@@ -26,8 +26,8 @@ np.random.seed(42)
 COLORS = np.random.randint(0, 255, size=(len(LABELS), 3), dtype="uint8")
 
 # derive the paths to the model weights and model configuration
-weightsPath = 'D:\illigal_car_parking\illigal\\adminResources\models\yolov4.weights'
-configPath = 'D:\illigal_car_parking\illigal\\adminResources\models\yolov4.cfg'
+weightsPath = 'adminResources/models/yolov4.weights'
+configPath = 'adminResources/models/yolov4.cfg'
 # load our model object detector trained on COCO dataset (80 classes)
 # and determine only the *output* layer names that we need from model
 print("[INFO] loading model from disk...")
@@ -35,10 +35,9 @@ net = cv2.dnn.readNetFromDarknet(configPath, weightsPath)
 ln = net.getLayerNames()
 ln = [ln[i - 1] for i in net.getUnconnectedOutLayers()]
 data_list = []
-file = inputVideo.split(os.sep)[-1].split(".")[0]
-parking_coordinate = "D:\illigal_car_parking\illigal\adminResources\parking-coordinate"
-# f = open("{}{}{}.txt".format(parking_coordinate, os.sep, file), "r")
-f=open('D:\illigal_car_parking\illigal\\adminResources\parking-coordinate\\test1.txt','r')
+file = os.path.basename(inputVideo).split(".")[0]
+parking_coordinate = "adminResources/parking-coordinate"
+f = open(os.path.join(parking_coordinate, "{}.txt".format(file)), "r")
 for lines in f:
     lines = eval(lines)
     data_list.append(lines)
@@ -63,7 +62,7 @@ def check_point_intersection(x1, y1, x2, y2, x, y):
 
 # initialize the video stream, pointer to output video file, and
 # frame dimensions
-vs = cv2.VideoCapture('D:\illigal_car_parking\illigal\\adminResources\input\\test1.mp4')
+vs = cv2.VideoCapture(inputVideo)
 
 frame_width = int(vs.get(3))
 frame_height = int(vs.get(4))
